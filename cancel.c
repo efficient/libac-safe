@@ -22,6 +22,7 @@ static void handler(void *ign) {
 static void *thread(void *arg) {
 	struct args *args = arg;
 	pthread_cleanup_push(handler, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	getnameinfo(args->addr, args->addrlen, args->name, NAMESZ, NULL, 0, 0);
 	pthread_cleanup_pop(false);
 	return NULL;
