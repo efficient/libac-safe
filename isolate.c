@@ -46,6 +46,11 @@ void *isolate_r(void *(*fun)(void *), void *arg, struct isolate *ctx) {
 
 	libgotcha_group_thread_set(group);
 
+	void (*__ctype_init)(void) =
+		(void (*)(void)) (uintptr_t) libgotcha_group_symbol(group, "__ctype_init");
+	assert(__ctype_init);
+	__ctype_init();
+
 	void *res = fun(arg);
 
 	libgotcha_group_thread_set(LIBGOTCHA_GROUP_SHARED);
