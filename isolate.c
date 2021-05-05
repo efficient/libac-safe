@@ -60,12 +60,17 @@ void *isolate_r(void *(*fun)(void *), void *arg, struct isolate *ctx) {
 struct wrapper {
 	void *(*fun)(void *);
 	void *arg;
+	bool finished;
 	struct isolate group;
 	char *release;
 };
 
 static void release(void *release) {
 	struct wrapper *wrapper = release;
+	if(!wrapper->finished) {
+		libgotcha_group_thread_set(LIBGOTCHA_GROUP_SHARED);
+		libgotcha_group_renew(wrapper->group.group);
+	}
 	if(wrapper->release)
 		*wrapper->release = *MAGIC;
 	free(wrapper);
@@ -75,6 +80,7 @@ static void *wrapper(void *arg) {
 	struct wrapper *wrapper = arg;
 	pthread_cleanup_push(release, wrapper);
 	arg = isolate_r(wrapper->fun, wrapper->arg, &wrapper->group);
+	wrapper->finished = true;
 	pthread_cleanup_pop(true);
 	return arg;
 }
@@ -102,6 +108,7 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*fun)(v
 	char magic = *MAGIC;
 	args->fun = fun;
 	args->arg = arg;
+	args->finished = false;
 	args->release = NULL;
 	if(atomic_compare_exchange_strong(group.magic, &magic, '\0')) {
 		memcpy(&args->group, &group, sizeof args->group);
