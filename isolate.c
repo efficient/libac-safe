@@ -7,8 +7,11 @@
 #include <string.h>
 #include <threads.h>
 
+#define MAGIC "isolate"
+
 struct isolate {
 	libgotcha_group_t group;
+	char magic[sizeof MAGIC];
 };
 
 void *isolate(void *(*fun)(void *), void *arg) {
@@ -21,13 +24,15 @@ void *isolate_r(void *(*fun)(void *), void *arg, struct isolate *ctx) {
 	assert(sizeof *ctx == ISOLATE_OPAQUE_BYTES);
 
 	libgotcha_group_t group;
-	if(ctx && ctx->group)
+	if(ctx && !strncmp(ctx->magic, MAGIC, sizeof MAGIC))
 		group = ctx->group;
 	else {
 		group = libgotcha_group_new();
 		assert(group != LIBGOTCHA_GROUP_ERROR);
-		if(ctx)
+		if(ctx) {
 			ctx->group = group;
+			strcpy(ctx->magic, MAGIC);
+		}
 	}
 
 	libgotcha_group_thread_set(group);

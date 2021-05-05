@@ -1,7 +1,7 @@
 #ifndef LIBISOLATE_H_
 #define LIBISOLATE_H_
 
-#define ISOLATE_OPAQUE_BYTES 8
+#define ISOLATE_OPAQUE_BYTES 16
 
 #ifdef LIBISOLATE_C_
 typedef struct isolate isolate_t;
