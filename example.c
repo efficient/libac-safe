@@ -10,12 +10,12 @@ static void *realm(void *args) {
 
 struct realm2 {
 	int (*fputs)(const char *, FILE *);
-	FILE *stderr;
+	FILE *const *stderr;
 };
 
 static void *realm2(void *args) {
 	struct realm2 *io = args;
-	io->fputs("realm2()\n", io->stderr);
+	io->fputs("realm2()\n", *io->stderr);
 	return NULL;
 }
 
@@ -25,7 +25,7 @@ int main(void) {
 
 	struct realm2 io = {
 		.fputs = fputs,
-		.stderr = stderr,
+		.stderr = &stderr,
 	};
 	isolate(realm2, &io);
 
