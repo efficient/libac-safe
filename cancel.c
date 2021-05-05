@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #define NAMESZ 10
 
@@ -13,9 +14,16 @@ struct args {
 	char name[NAMESZ];
 };
 
+static void handler(void *ign) {
+	(void) ign;
+	close(STDERR_FILENO + 1);
+}
+
 static void *thread(void *arg) {
 	struct args *args = arg;
+	pthread_cleanup_push(handler, NULL);
 	getnameinfo(args->addr, args->addrlen, args->name, NAMESZ, NULL, 0, 0);
+	pthread_cleanup_pop(false);
 	return NULL;
 }
 
