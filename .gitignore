@@ -1,0 +1,4 @@
+/libgotcha
+
+target/
+*.lock
