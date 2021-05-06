@@ -24,6 +24,18 @@ pub struct Isolate (Group);
 
 impl Default for Isolate {
 	fn default() -> Self {
-		Self (Group::new().expect("Ran out of libsets!"))
+		use gotcha::group_lookup_symbol_fn;
+		let group = Group::new().expect("Ran out of libsets!");
+		let swallow_panics: fn() = unsafe {
+			group_lookup_symbol_fn!(group, swallow_panics)
+		}.unwrap();
+		swallow_panics();
+		Self (group)
 	}
+}
+
+#[no_mangle]
+fn swallow_panics() {
+	use std::panic::set_hook;
+	set_hook(Box::new(|_| ()));
 }
