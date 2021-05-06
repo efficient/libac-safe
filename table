@@ -1,0 +1,12 @@
+#!/bin/sh
+
+count="0"
+advance=""
+export LIBGOTCHA_NOGLOBALS=
+export LIBGOTCHA_NUMGROUPS=1
+while res="`gdb -batch-silent -x panic.gdb -ex b\ realm -ex r $advance -ex panic -ex c example 2>/dev/null`"
+do
+	echo "$count,`echo "$res" | grep ^tagged | wc -l`,`echo "$res" | grep ^drop | wc -l`"
+	count="$((count + 1))"
+	advance="$advance -x ni.gdb"
+done
