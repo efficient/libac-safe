@@ -1,5 +1,8 @@
+#[cfg(feature = "isolate")]
 extern crate isolate;
 mod guarded;
+#[cfg(not(feature = "isolate"))]
+mod isolate;
 
 fn main() {
 	use isolate::isolate;
