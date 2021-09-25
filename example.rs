@@ -61,6 +61,7 @@ fn realm(_: ()) -> bool {
 	res
 }
 
+#[inline(never)]
 fn panic() {
 	panic!();
 }
