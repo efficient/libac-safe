@@ -11,6 +11,7 @@ fn main() {
 	assert!(isolate(catch_unwind, panic).is_err());
 }
 
+#[inline(never)]
 fn realm(_: ()) -> bool {
 	use guarded::Bool;
 	use std::borrow::Cow;
