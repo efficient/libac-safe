@@ -28,19 +28,19 @@ struct example {
 		shared_ptr<Guarded<bool>> shared(new Guarded<bool>("shared_ptr"));
 		res = res || shared;
 
-		vector<Guarded<bool>> vec(1, Guarded<bool>("vector"));
+		vector<Guarded<bool>> vec(1, "vector");
 		res = res || vec[0];
 
-		deque<Guarded<bool>> deq(1, Guarded<bool>("deque"));
+		deque<Guarded<bool>> deq(1, "deque");
 		res = res || deq[0];
 
-		list<Guarded<bool>> linked(1, Guarded<bool>("list"));
+		list<Guarded<bool>> linked(1, "list");
 		res = res || linked.front();
 
-		unordered_map<monostate, Guarded<bool>> hash({{monostate(), Guarded<bool>("unordered_map")}});
+		unordered_map<monostate, Guarded<bool>> hash({{monostate(), "unordered_map"}});
 		res = res || hash.at(monostate());
 
-		map<monostate, Guarded<bool>> btree({{monostate(), Guarded<bool>("map")}});
+		map<monostate, Guarded<bool>> btree({{monostate(), "map"}});
 		res = res | btree.at(monostate());
 
 		return res;
