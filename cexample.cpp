@@ -10,7 +10,7 @@
 
 using std::monostate;
 
-struct example {
+struct cexample {
 	static bool realm() {
 		using std::deque;
 		using std::list;
@@ -52,7 +52,7 @@ static void panic() {
 }
 
 int main() {
-	example::realm();
+	cexample::realm();
 	try {
 		panic();
 	} catch(monostate) {}
