@@ -1,10 +1,17 @@
 #!/bin/sh
 
+verbose="false"
+if [ "$1" = "-v" ]
+then
+	verbose="true"
+	shift
+fi
+
 if [ "$#" -eq "1" ]
 then
 	prog="$1"
 else
-	echo "USAGE: $0 <program>"
+	echo "USAGE: $0 [-v] <program>"
 	exit 1
 fi
 
@@ -16,6 +23,7 @@ panic="`gdb -ex starti -ex inf\ ad\ "$prog::panic" -ex c -ex q "$prog" 2>/dev/nu
 while res="`gdb -batch-silent -ex p\ \\$panic\ =\ "$panic" -ex p\ \\$frame\ =\ "$prog::realm" -x panic.gdb -ex b\ realm -ex r $advance -ex w\ lang\ rust\ --\ panic -ex c "$prog" 2>/dev/null`"
 do
 	echo "$count,`echo "$res" | grep ^tagged | wc -l`,`echo "$res" | grep ^drop | wc -l`"
+	"$verbose" && echo "$res"
 	count="$((count + 1))"
 	advance="$advance -x ni.gdb"
 done
