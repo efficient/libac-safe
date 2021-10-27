@@ -7,11 +7,16 @@ then
 	shift
 fi
 
-if [ "$#" -eq "1" ]
+frame="realm"
+if [ "$#" -le "2" ]
 then
 	prog="$1"
+	if [ "$#" -eq "2" ]
+	then
+		frame="$2"
+	fi
 else
-	echo "USAGE: $0 [-v] <program>"
+	echo "USAGE: $0 [-v] <program> [function]"
 	exit 1
 fi
 
@@ -19,7 +24,7 @@ count="0"
 export LIBGOTCHA_NOGLOBALS=
 export LIBGOTCHA_NUMGROUPS=1
 panic="`gdb -ex starti -ex inf\ ad\ "$prog::panic" -ex c -ex q "$prog" 2>/dev/null | sed -n "s/.*$prog::panic.*\(0x\S\+\).*/\1/p"`"
-while res="`gdb -batch-silent -ex p\ \\$panic\ =\ "$panic" -ex p\ \\$count\ =\ "$count" -ex p\ \\$frame\ =\ \\""$prog::realm"\\" -x panic.gdb -ex b\ realm -ex r -x ni.gdb -ex panic -ex c "$prog" 2>/dev/null`"
+while res="`gdb -batch-silent -ex p\ \\$panic\ =\ "$panic" -ex p\ \\$count\ =\ "$count" -ex p\ \\$frame\ =\ \\""$prog::$frame"\\" -x panic.gdb -ex b\ "$frame" -ex r -x ni.gdb -ex panic -ex c "$prog" 2>/dev/null`"
 do
 	echo "$count,`echo "$res" | grep ^tagged | wc -l`,`echo "$res" | grep ^drop | wc -l`"
 	"$verbose" && echo "$res"
