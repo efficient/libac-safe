@@ -5,21 +5,22 @@ use std::ops::DerefMut;
 pub type Bool = Guarded<bool>;
 
 pub struct Guarded<T> {
-	tag: &'static str,
+	_tag: Guard,
 	val: T,
 }
 
 impl<T: Default> Guarded<T> {
 	pub fn tagged(tag: &'static str) -> Self {
-		println!("tagged({})", tag);
 		Self::tagged_val(tag, T::default())
 	}
 }
 
 impl<T> Guarded<T> {
 	pub fn tagged_val(tag: &'static str, val: T) -> Self {
+		let tag = Guard (tag);
+		tag.new();
 		Self {
-			tag,
+			_tag: tag,
 			val,
 		}
 	}
@@ -34,8 +35,10 @@ impl<R: ?Sized, T: AsRef<R>> AsRef<R> for Guarded<T> {
 impl<T: Clone> Clone for Guarded<T> {
 	fn clone(&self) -> Self {
 		println!("tagged(<cloned>)");
+		let tag = Guard ("<cloned>");
+		tag.new();
 		Self {
-			tag: "<cloned>",
+			_tag: tag,
 			val: self.val.clone(),
 		}
 	}
@@ -52,12 +55,6 @@ impl<T> Deref for Guarded<T> {
 impl<T> DerefMut for Guarded<T> {
 	fn deref_mut(&mut self) -> &mut Self::Target {
 		&mut self.val
-	}
-}
-
-impl<T> Drop for Guarded<T> {
-	fn drop(&mut self) {
-		println!("drop({})", self.tag);
 	}
 }
 
@@ -78,5 +75,21 @@ impl<T: PartialEq> PartialEq for Guarded<T> {
 impl<T: PartialOrd> PartialOrd for Guarded<T> {
 	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
 		self.val.partial_cmp(&other.val)
+	}
+}
+
+struct Guard (&'static str);
+
+impl Guard {
+	fn new(&self) {
+		let Self (tag) = self;
+		println!("tagged({})", tag);
+	}
+}
+
+impl Drop for Guard {
+	fn drop(&mut self) {
+		let Self (tag) = self;
+		println!("drop({})", tag);
 	}
 }
