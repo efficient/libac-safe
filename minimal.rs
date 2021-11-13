@@ -15,6 +15,7 @@ fn realm() -> bool {
 }
 
 #[inline(never)]
+#[no_mangle]
 fn panic() {
 	panic!();
 }

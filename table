@@ -23,11 +23,12 @@ fi
 count="0"
 export LIBGOTCHA_NOGLOBALS=
 export LIBGOTCHA_NUMGROUPS=1
-panic="`gdb -ex starti -ex inf\ ad\ "$prog::panic" -ex c -ex q "$prog" 2>/dev/null | sed -n "s/.*$prog::panic.*\(0x\S\+\).*/\1/p"`"
+panic="`gdb -ex starti -ex inf\ ad\ panic -ex c -ex q "$prog" 2>/dev/null | sed -n "s/.*panic.*\(0x\S\+\).*/\1/p"`"
+realign="`gdb -ex starti -ex inf\ ad\ realign -ex c -ex q "$prog" 2>/dev/null | sed -n "s/.*realign.*\(0x\S\+\).*/\1/p"`"
 "./$prog" >/dev/null 2>/dev/null
 
 groundtruth="$?"
-while res="`gdb -batch-silent -return-child-result -ex han\ all\ nostop -ex p\ \\$panic\ =\ "$panic" -ex p\ \\$count\ =\ "$count" -ex p\ \\$frame\ =\ \\""$prog::$frame"\\" -x panic.gdb -ex b\ "$frame" -ex r -x ni.gdb -ex panic -ex c -x signals.gdb "$prog" 2>/dev/null`"; status="$?"; [ "$status" -ne "1" ]
+while res="`gdb -batch-silent -return-child-result -ex han\ all\ nostop -ex p\ \\$panic\ =\ "$panic" -ex p\ \\$realign\ =\ "$realign" -ex p\ \\$count\ =\ "$count" -ex p\ \\$frame\ =\ \\""$prog::$frame"\\" -x panic.gdb -ex b\ "$frame" -ex r -x ni.gdb -ex panic -ex c -x signals.gdb "$prog" 2>/dev/null`"; status="$?"; [ "$status" -ne "1" ]
 do
 	echo "$count,`echo "$res" | grep ^tagged | wc -l`,`echo "$res" | grep ^drop | wc -l`"
 	"$verbose" && [ -n "$res" ] && echo "$res" >&2

@@ -63,6 +63,7 @@ fn realm(_: ()) -> bool {
 }
 
 #[inline(never)]
+#[no_mangle]
 fn panic() {
 	panic!();
 }
