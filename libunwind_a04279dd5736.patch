@@ -11,3 +11,25 @@ index de0eb6de9d70..467878a2c897 100644
        uint64_t reg;
        uint64_t reg2;
        int64_t offset;
+diff --git i/libunwind/src/UnwindCursor.hpp w/libunwind/src/UnwindCursor.hpp
+index 757d9808a978..8eb0d3318743 100644
+--- i/libunwind/src/UnwindCursor.hpp
++++ w/libunwind/src/UnwindCursor.hpp
+@@ -2102,7 +2102,16 @@ int UnwindCursor<A, R>::step() {
+ 
+   // update info based on new PC
+   if (result == UNW_STEP_SUCCESS) {
+-    this->setInfoBasedOnIPRegister(true);
++    bool isReturnAddress = true;
++  #if defined(_LIBUNWIND_SUPPORT_DWARF_INDEX)
++    pint_t pc = getReg(UNW_REG_IP);
++    UnwindInfoSections sects;
++    typename CFI_Parser<A>::FDE_Info fdeInfo;
++    typename CFI_Parser<A>::CIE_Info cieInfo;
++    _addressSpace.findUnwindSections(pc, sects);
++    isReturnAddress = !(sects.dwarf_index_section && EHHeaderParser<A>::findFDE(_addressSpace, pc, sects.dwarf_index_section, (uint32_t)sects.dwarf_index_section_length, &fdeInfo, &cieInfo) && pc == fdeInfo.pcStart);
++  #endif
++    this->setInfoBasedOnIPRegister(isReturnAddress);
+     if (_unwindInfoMissing)
+       return UNW_STEP_END;
+   }
