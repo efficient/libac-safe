@@ -25,6 +25,29 @@ export LIBGOTCHA_NOGLOBALS=
 export LIBGOTCHA_NUMGROUPS=1
 panic="`gdb -ex starti -ex inf\ ad\ panic -ex c -ex q "$prog" 2>/dev/null | sed -n "s/.*panic.*\(0x\S\+\).*/\1/p"`"
 realign="`gdb -ex starti -ex inf\ ad\ realign -ex c -ex q "$prog" 2>/dev/null | sed -n "s/.*realign.*\(0x\S\+\).*/\1/p"`"
+
+if [ -z "$panic" ]
+then
+	echo "ERROR: No symbol 'panic'!" >&2
+	exit 2
+elif [ -z "$realign" ]
+then
+	echo "ERROR: No symbol 'realign'!  Did you build with -Clink-arg=-urealign -Clink-arg=realign.s?" >&2
+	exit 3
+elif ! { ldd "$prog" | grep '\<libunwind\.so' >/dev/null; }
+then
+	echo "ERROR: Not linked against (custom) libunwind!  Did you build with -L. -lunwind?" >&2
+	exit 4
+elif ldd "$prog" | grep '\<libunwind\.so.* => not found$' >/dev/null
+then
+	echo "ERROR: Cannot find libunwind!  Did you build with -Clink-arg=-Wl,-R\\\$ORIGIN?" >&2
+	exit 5
+elif [ "`objdump -Wo "$prog" | wc -l`" -gt "3" ]
+then
+	echo "ERROR: Executable contains debug info!  Did you forget to build without -g or run strip -g?" >&2
+	exit 6
+fi
+
 "./$prog" >/dev/null 2>/dev/null
 
 groundtruth="$?"
