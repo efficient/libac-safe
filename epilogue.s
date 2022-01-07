@@ -36,13 +36,13 @@ ingerc_epilogue_start:
 	lea	8(%rsp), %rcx
 	mov	%rcx, (%rsi)
 	mov	ingerc_epilogue_fp@gotpcrel(%rip), %rsi
-	lea	8(%rdi), %rcx
+	mov	%rdi, %rcx
 	mov	%rcx, (%rsi)
 	mov	ingerc_epilogue_ra@gotpcrel(%rip), %rsi
-	mov	8(%rdi), %rcx
+	mov	(%rdi), %rcx
 	mov	%rcx, (%rsi)
 	mov	ingerc_epilogue_end@gotpcrel(%rip), %rsi
-	mov	%rsi, 8(%rdi)
+	mov	%rsi, (%rdi)
 	ret
 	.size	ingerc_epilogue_start, .-ingerc_epilogue_start
 
