@@ -49,9 +49,9 @@ ingerc_epilogue_start:
 	.type	ingerc_epilogue_end,@function
 	.globl	ingerc_epilogue_end
 ingerc_epilogue_end:
-	mov	ingerc_epilogue_ra@gotpcrel(%rip), %rcx
-	mov	(%rcx), %rdi
-	xor	%rsi, %rsi
-	mov	%rsi, (%rcx)
+	mov	ingerc_epilogue_ra@gotpcrel(%rip), %rsi
+	mov	(%rsi), %rdi
+	xor	%rcx, %rcx
+	mov	%rcx, (%rsi)
 	jmp	*%rdi
 	.size	ingerc_epilogue_end, .-ingerc_epilogue_end
