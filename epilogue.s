@@ -51,7 +51,8 @@ ingerc_epilogue_start:
 ingerc_epilogue_end:
 	mov	ingerc_epilogue_ra@gotpcrel(%rip), %rsi
 	mov	(%rsi), %rdi
+	push	%rdi
 	xor	%rcx, %rcx
 	mov	%rcx, (%rsi)
-	jmp	*%rdi
+	ret
 	.size	ingerc_epilogue_end, .-ingerc_epilogue_end
