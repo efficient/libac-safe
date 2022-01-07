@@ -1,17 +1,5 @@
 	.bss
 
-	.type	ingerc_epilogue_a,@object
-	.align	8
-ingerc_epilogue_a:
-	.zero	8
-	.size	ingerc_epilogue_a, .-ingerc_epilogue_a
-
-	.type	ingerc_epilogue_d,@object
-	.align	8
-ingerc_epilogue_d:
-	.zero	8
-	.size	ingerc_epiligue_d, .-ingerc_epilogue_d
-
 	.type	ingerc_epilogue_ip,@object
 	.align	8
 ingerc_epilogue_ip:
@@ -41,24 +29,20 @@ ingerc_epilogue_ra:
 	.type	ingerc_epilogue_start,@function
 	.globl	ingerc_epilogue_start
 ingerc_epilogue_start:
-	mov	ingerc_epilogue_a@gotpcrel(%rip), %rcx
-	mov	%rax, (%rcx)
-	mov	ingerc_epilogue_d@gotpcrel(%rip), %rcx
-	mov	%rdx, (%rcx)
-	mov	ingerc_epilogue_ip@gotpcrel(%rip), %rax
+	mov	ingerc_epilogue_ip@gotpcrel(%rip), %rsi
 	mov	(%rsp), %rcx
-	mov	%rcx, (%rax)
-	mov	ingerc_epilogue_sp@gotpcrel(%rip), %rax
+	mov	%rcx, (%rsi)
+	mov	ingerc_epilogue_sp@gotpcrel(%rip), %rsi
 	lea	8(%rsp), %rcx
-	mov	%rcx, (%rax)
-	mov	ingerc_epilogue_fp@gotpcrel(%rip), %rax
+	mov	%rcx, (%rsi)
+	mov	ingerc_epilogue_fp@gotpcrel(%rip), %rsi
 	lea	8(%rdi), %rcx
-	mov	%rcx, (%rax)
-	mov	ingerc_epilogue_ra@gotpcrel(%rip), %rax
+	mov	%rcx, (%rsi)
+	mov	ingerc_epilogue_ra@gotpcrel(%rip), %rsi
 	mov	8(%rdi), %rcx
-	mov	%rcx, (%rax)
-	mov	ingerc_epilogue_end@gotpcrel(%rip), %rax
-	mov	%rax, 8(%rdi)
+	mov	%rcx, (%rsi)
+	mov	ingerc_epilogue_end@gotpcrel(%rip), %rsi
+	mov	%rsi, 8(%rdi)
 	ret
 	.size	ingerc_epilogue_start, .-ingerc_epilogue_start
 
