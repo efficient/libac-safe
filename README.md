@@ -24,7 +24,6 @@ limitations under the License.
 
 Building _libac-safe_
 ---------------------
- 1. `$ rmdir libgotcha`
  1. `$ ln -s ../path/to/libgotcha`
  1. `$ make -Clibgotcha libgotcha.a libgotcha.mk`
  1. `$ make`

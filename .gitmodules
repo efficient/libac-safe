@@ -1,4 +1,0 @@
-[submodule "libgotcha"]
-	path = libgotcha
-	url = git://github.com/efficient/libinger
-	branch = gotcha
